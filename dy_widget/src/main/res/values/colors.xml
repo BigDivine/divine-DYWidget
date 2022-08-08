@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--    自定义波浪曲线组件颜色-->
+    <color name="blue_button">#2F80F6</color>
+    <!--    主题颜色，可以更改-->
+    <color name="theme_color">#EF424C</color>
+    <!--    自定义输入框灰色边框颜色-->
+    <color name="back_black">#323232</color>
+    <!--    自定义电池点亮组件颜色-->
+    <color name="lowerPowerColor">#ff4d4d</color>
+    <color name="onlineColor">#00d68d</color>
+    <color name="offlineColor">#bfbfbf</color>
+    <!--    分割线颜色-->
+    <color name="back_divider">#F2F5FB</color>
+
+    <color name="machine_warn_waiting">#FF4D46</color>
+    <color name="X_axis_default_color">#D8D8D8</color>
+    <color name="X_axis_default_text_color">#3E4A59</color>
+    <color name="broken_line_default_color">#1890FF</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="gray_text_color_two">#3E4A59</color>
+
+    <color name="barGreen">#52C41A</color>
+    <color name="barOrange">#FFAD58</color>
+    <color name="barGray">#E2ECFF</color>
+</resources>

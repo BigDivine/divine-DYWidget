@@ -1,0 +1,43 @@
+ext {
+    AndroidXVersions = [
+            AppCompatVersion          : "1.3.0",
+            ConstraintLayoutVersion   : "2.0.4",
+            RecyclerViewVersion       : "1.2.0-alpha05",
+
+//            AnnotationVersion         : "+",
+//            CoreVersion               : '1.3.1',
+//            NavigationUIVersion       : "2.3.1",
+//            NavigationFragmentVersion : "2.3.1",
+//            LifecycleExtensionsVersion: "2.2.0",
+//            ViewPager2Version         : "1.0.0-alpha02",
+//            ViewPagerVersion          : "1.0.0",
+//            CardViewVersion           : "1.0.0",
+//            SwipeRefreshLayoutVersion : "1.1.0",
+    ]
+//    AndroidXTextVersions = [
+//            TestExtJunitVersion: "1.1.2",
+//            EspressoCoreVersion: "3.3.0",
+//    ]
+    AndroidX = [
+            AppCompat          : "androidx.appcompat:appcompat:${AndroidXVersions.AppCompatVersion}",
+            ConstraintLayout   : "androidx.constraintlayout:constraintlayout:${AndroidXVersions.ConstraintLayoutVersion}",
+            RecyclerView       : "androidx.recyclerview:recyclerview:${AndroidXVersions.RecyclerViewVersion}",
+
+//            Annotation         : "androidx.annotation:annotation:${AndroidXVersions.AnnotationVersion}",
+//            Core               : "androidx.core:core:${AndroidXVersions.CoreVersion}",
+//            NavigationUI       : "androidx.navigation:navigation-ui:${AndroidXVersions.NavigationUIVersion}",
+//            NavigationFragment : "androidx.navigation:navigation-fragment:${AndroidXVersions.NavigationFragmentVersion}",
+//            LifecycleExtensions: "androidx.lifecycle:lifecycle-extensions:${AndroidXVersions.LifecycleExtensionsVersion}",
+//            ViewPager          : "androidx.viewpager:viewpager:${AndroidXVersions.ViewPagerVersion}",
+//            ViewPager2         : "androidx.viewpager2:viewpager2:${AndroidXVersions.ViewPager2Version}",
+//            CardView           : "androidx.cardview:cardview:${AndroidXVersions.CardViewVersion}",
+//            TestExtJunit       : "androidx.test.ext:junit:${AndroidXVersions.TestExtJunitVersion}",
+//            EspressoCore       : "androidx.test.espresso:espresso-core:${AndroidXVersions.EspressoCoreVersion}",
+//            SwipeRefreshLayout : "androidx.swiperefreshlayout:swiperefreshlayout:${AndroidXVersions.SwipeRefreshLayoutVersion}",
+
+    ]
+//    AndroidXTest = [
+//            TestExtJunit: "androidx.test.ext:junit:${AndroidXTextVersions.TestExtJunitVersion}",
+//            EspressoCore: "androidx.test.espresso:espresso-core:${AndroidXTextVersions.EspressoCoreVersion}",
+//    ]
+}

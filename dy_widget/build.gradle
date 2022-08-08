@@ -1,0 +1,44 @@
+plugins {
+    id 'com.android.library'
+    id 'maven-publish'
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 32
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    publishing{
+        singleVariant("release"){
+            withSourcesJar()
+        }
+    }
+}
+dependencies {
+    implementation AndroidX.AppCompat
+    implementation AndroidX.ConstraintLayout
+    implementation AndroidX.RecyclerView
+    implementation 'com.github.BigDivine:divine-DYBase:1.0.1'
+}
+
+//jitpack.io ERROR: No build artifacts found 问题解决
+//由于在Android studio开发库时会带com.android.libraryplugin，生成了artifacts
+//所以我们需要手动添加artifacts。
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.BigDivine'
+                artifactId = 'divine-DYWidget'
+                version = '1.0.0'
+            }
+        }
+    }
+}
