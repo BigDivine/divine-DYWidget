@@ -2,8 +2,6 @@
 <resources>
     <!--    自定义波浪曲线组件颜色-->
     <color name="blue_button">#2F80F6</color>
-    <!--    主题颜色，可以更改-->
-    <color name="theme_color">#EF424C</color>
     <!--    自定义输入框灰色边框颜色-->
     <color name="back_black">#323232</color>
     <!--    自定义电池点亮组件颜色-->
@@ -18,8 +16,12 @@
     <color name="X_axis_default_text_color">#3E4A59</color>
     <color name="broken_line_default_color">#1890FF</color>
 
-    <color name="white">#FFFFFF</color>
     <color name="gray_text_color_two">#3E4A59</color>
+    <color name="blue_text_color">#1667E0</color>
+    <color name="gray_text_color">#364B60</color>
+    <color name="black_text_color">#24272B</color>
+    <color name="edit_text_color">#77808A</color>
+    <color name="line_color">#EFEFF4</color>
 
     <color name="barGreen">#52C41A</color>
     <color name="barOrange">#FFAD58</color>

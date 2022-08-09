@@ -6,6 +6,17 @@
         <entry key="..\:/A-github-Android/divine-lib/divine-DYWeChat/app/src/main/res/layout/activity_main.xml" value="0.1875" />
         <entry key="..\:/A-github-Android/divine-lib/divine-DYWeChat/app/src/main/res/layout/content_main.xml" value="0.1875" />
         <entry key="..\:/A-github-Android/divine-lib/divine-DYWeChat/app/src/main/res/layout/fragment_first.xml" value="0.1875" />
+        <entry key="..\:/A-github-Android/divine-lib/divine-DYWidget/dy_widget/src/main/res/drawable/progress_bar.xml" value="0.1955" />
+        <entry key="..\:/A-github-Android/divine-lib/divine-DYWidget/dy_widget/src/main/res/drawable/rotate_progress_dialog.xml" value="0.1955" />
+        <entry key="..\:/A-github-Android/divine-lib/divine-DYWidget/dy_widget/src/main/res/drawable/round_back_hollow_5.xml" value="0.1955" />
+        <entry key="..\:/A-github-Android/divine-lib/divine-DYWidget/dy_widget/src/main/res/drawable/shape_white_corner_5dp.xml" value="0.1955" />
+        <entry key="..\:/A-github-Android/divine-lib/divine-DYWidget/dy_widget/src/main/res/layout/dialog_app_loading_layout.xml" value="0.234375" />
+        <entry key="..\:/A-github-Android/divine-lib/divine-DYWidget/dy_widget/src/main/res/layout/dialog_choosephoto.xml" value="0.234375" />
+        <entry key="..\:/A-github-Android/divine-lib/divine-DYWidget/dy_widget/src/main/res/layout/dialog_delete_layout.xml" value="0.234375" />
+        <entry key="..\:/A-github-Android/divine-lib/divine-DYWidget/dy_widget/src/main/res/layout/dialog_explain_layout.xml" value="0.234375" />
+        <entry key="..\:/A-github-Android/divine-lib/divine-DYWidget/dy_widget/src/main/res/layout/dialog_loading_layout.xml" value="0.234375" />
+        <entry key="..\:/A-github-Android/divine-lib/divine-DYWidget/dy_widget/src/main/res/layout/dialog_progress_layout.xml" value="0.234375" />
+        <entry key="..\:/A-github-Android/divine-lib/divine-DYWidget/dy_widget/src/main/res/layout/toast_img_layout.xml" value="0.234375" />
       </map>
     </option>
   </component>

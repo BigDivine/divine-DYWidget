@@ -47,16 +47,16 @@ public class AppLoadingView extends View {
         this.mCanvas = canvas;
         mCanvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
 
-        mPaint.setColor(context.getResources().getColor(R.color.white));
+        mPaint.setColor(context.getResources().getColor(com.divine.base.R.color.dy_white));
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(0.1f);
         mPaint.setAntiAlias(true);
 
-        mPaintSin.setColor(context.getResources().getColor(R.color.white));
+        mPaintSin.setColor(context.getResources().getColor(com.divine.base.R.color.dy_white));
         mPaintSin.setStrokeWidth(2f);
         mPaintSin.setAntiAlias(true);
         mCanvas.drawRect(0,0,getWidth(),getHeight(),mPaintSin);
-        Bitmap bmpLauncher = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
+        Bitmap bmpLauncher = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_dy_launcher);
         Matrix mMatrix = new Matrix();
         int bmpH = bmpLauncher.getHeight();
         int bmpW = bmpLauncher.getWidth();

@@ -45,7 +45,7 @@ public class WaterDropView extends View {
         this.mCanvas = canvas;
         mCanvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
 
-        mPaint.setColor(context.getResources().getColor(R.color.white));
+        mPaint.setColor(context.getResources().getColor(com.divine.base.R.color.dy_white));
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(0.1f);
         mPaint.setAntiAlias(true);

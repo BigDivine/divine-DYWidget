@@ -9,14 +9,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_marginLeft="@dimen/dp_5"
-        android:layout_marginTop="@dimen/dp_5"
-        android:layout_marginRight="@dimen/dp_5"
-        android:layout_marginBottom="@dimen/dp_10"
-        android:drawableTop="@mipmap/ic_launcher"
-        android:drawablePadding="@dimen/dp_5"
-        android:textColor="@color/black"
-        android:textSize="@dimen/sp_16"
+        android:layout_marginLeft="@dimen/dy_5dp"
+        android:layout_marginTop="@dimen/dy_5dp"
+        android:layout_marginRight="@dimen/dy_5dp"
+        android:layout_marginBottom="@dimen/dy_10dp"
+        android:drawableTop="@mipmap/ic_dy_launcher"
+        android:drawablePadding="@dimen/dy_5dp"
+        android:textColor="@color/dy_black"
+        android:textSize="@dimen/dy_16sp"
         tools:text="点击toast" />
 </RelativeLayout>
 

@@ -4,15 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
-    android:padding="@dimen/dp_10">
+    android:padding="@dimen/dy_10dp">
 
     <TextView
         android:id="@+id/progress_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/dp_10"
-        android:layout_marginTop="@dimen/dp_10"
-        android:layout_marginBottom="@dimen/dp_10"
+        android:layout_marginLeft="@dimen/dy_10dp"
+        android:layout_marginTop="@dimen/dy_10dp"
+        android:layout_marginBottom="@dimen/dy_10dp"
         android:text="下载中..."
         app:layout_constraintBottom_toTopOf="@id/progress_bar"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -22,7 +22,7 @@
         android:id="@+id/progress_bar"
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_20"
+        android:layout_height="@dimen/dy_20dp"
         android:progressDrawable="@drawable/progress_bar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

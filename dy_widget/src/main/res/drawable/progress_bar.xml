@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@android:id/background">
+        <!--形状-->
+        <shape>
+            <!-- 角球-->
+            <corners android:radius="5dip" />
+            <!--梯度-->
+            <gradient
+                android:angle="0"
+                android:endColor="#cccccc"
+                android:startColor="#666666" />
+        </shape>
+    </item>
+
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape>
+                <corners android:radius="5dip" />
+                <gradient
+                    android:angle="0"
+                    android:endColor="@color/dy_white"
+                    android:startColor="@color/dy_theme_color" />
+            </shape>
+        </clip>
+    </item>
+
+</layer-list>

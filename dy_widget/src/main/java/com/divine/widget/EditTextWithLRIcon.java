@@ -61,7 +61,7 @@ public class EditTextWithLRIcon extends EditText {
         super.onFocusChanged(focused, direction, previouslyFocusedRect);
         Drawable[] compoundDrawables = getCompoundDrawables();
         if (focused) {
-            setDrawableColor(mContext.getResources().getColor(R.color.theme_color));
+            setDrawableColor(mContext.getResources().getColor(com.divine.base.R.color.dy_theme_color));
             String text = getText().toString();
             if (TextUtils.isEmpty(text)) {
                 setCompoundDrawables(left, compoundDrawables[1], null, compoundDrawables[3]);

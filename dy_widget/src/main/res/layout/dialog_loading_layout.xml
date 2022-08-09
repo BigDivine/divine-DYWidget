@@ -7,8 +7,8 @@
 
     <ProgressBar
         android:id="@+id/progress_rotate"
-        android:layout_width="@dimen/dp_50"
-        android:layout_height="@dimen/dp_50"
+        android:layout_width="@dimen/dy_50dp"
+        android:layout_height="@dimen/dy_50dp"
         android:indeterminateDrawable="@drawable/rotate_progress_dialog"
         app:layout_constraintBottom_toTopOf="@id/progress_content"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -19,7 +19,7 @@
         android:id="@+id/progress_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dy_10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

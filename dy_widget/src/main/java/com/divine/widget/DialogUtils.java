@@ -305,7 +305,7 @@ public class DialogUtils {
         int progressPercent = Integer.parseInt(String.valueOf(progress * 100 / contentLength));
         Log.e("download percent", "下载中...(" + progressPercent + "%)");
         progressTitle.setText("下载中...(" + progressPercent + "%)");
-        progressTitle.setTextColor(context.getResources().getColor(R.color.theme_color));
+        progressTitle.setTextColor(context.getResources().getColor(com.divine.base.R.color.dy_theme_color));
         mProgressBar.setProgress(progressPercent);
         dialog.setCancelable(false);
         dialog.setContentView(progressLayout);

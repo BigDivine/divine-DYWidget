@@ -24,7 +24,7 @@ dependencies {
     implementation AndroidX.AppCompat
     implementation AndroidX.ConstraintLayout
     implementation AndroidX.RecyclerView
-    implementation 'com.github.BigDivine:divine-DYBase:1.0.1'
+    implementation 'com.github.BigDivine:divine-DYBase:1.0.3r'
 }
 
 //jitpack.io ERROR: No build artifacts found 问题解决
@@ -37,7 +37,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.BigDivine'
                 artifactId = 'divine-DYWidget'
-                version = '1.0.0'
+                version = '1.0.2bate'
             }
         }
     }

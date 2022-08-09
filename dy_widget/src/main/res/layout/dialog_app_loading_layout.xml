@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="@dimen/dp_10"
+    android:padding="@dimen/dy_10dp"
     android:background="@drawable/shape_white_corner_5dp">
 
-    <com.divine.dy.lib_widget.widget.AppLoadingView
+    <com.divine.widget.AppLoadingView
         android:id="@+id/progress_app"
-        android:layout_width="@dimen/dp_50"
-        android:layout_height="@dimen/dp_50"
+        android:layout_width="@dimen/dy_50dp"
+        android:layout_height="@dimen/dy_50dp"
          app:layout_constraintBottom_toTopOf="@id/progress_content"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -19,7 +19,7 @@
         android:id="@+id/progress_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dy_10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
