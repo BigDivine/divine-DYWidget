@@ -1,4 +1,4 @@
-package com.divine.widget.old;
+package com.divine.widget.dychart;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -23,7 +23,7 @@ import java.util.Map;
  * CreateDate: 2020/10/20
  * Describe:
  */
-public class BrokenlineView extends View {
+public class BrokenLineView extends View {
     //实心圆点
     public final static int DOT_MODE_SOLID = 0;
     //空心圆点
@@ -72,18 +72,18 @@ public class BrokenlineView extends View {
     private float brokenLineWidth;
     private int brokenLineDotMode;
 
-    public BrokenlineView(Context context) {
+    public BrokenLineView(Context context) {
         super(context);
         this.context = context;
     }
 
-    public BrokenlineView(Context context, AttributeSet attrs) {
+    public BrokenLineView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
         initAttrs(attrs);
     }
 
-    public BrokenlineView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public BrokenLineView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
         initAttrs(attrs);
@@ -127,7 +127,6 @@ public class BrokenlineView extends View {
         xTextPaint.setColor(xAxisTextColor);
         xTextPaint.setStyle(Paint.Style.FILL);
         xTextPaint.setTextSize(xAxisTextSize);
-
         //坐标点
         pointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         pointPaint.setAntiAlias(true);
@@ -223,7 +222,7 @@ public class BrokenlineView extends View {
 
                     float date = getSeconds(data.get(i).getTime());
 
-                    float precent = Float.parseFloat(data.get(i).getPrecent());
+                    float precent = Float.parseFloat(data.get(i).getPercent());
                     float x = scaleX + date * kuan;
                     float y = yuandiany - height / max * precent;
                     //画坐标点
@@ -238,7 +237,7 @@ public class BrokenlineView extends View {
                     if (i > 0) {
                         float dateL = getSeconds(data.get(i - 1).getTime());
                         float startX = scaleX + dateL * kuan;
-                        float startY = yuandiany - height / max * Float.parseFloat(data.get(i - 1).getPrecent());
+                        float startY = yuandiany - height / max * Float.parseFloat(data.get(i - 1).getPercent());
                         canvas.drawLine(startX, startY, x, y, pointLinePaint);
                     }
                 }
@@ -306,39 +305,5 @@ public class BrokenlineView extends View {
         //        this.ysplit = ysplit;
         initView();
         invalidate();
-    }
-}
-
-class BrokenLineBean {
-    private String time;
-    private String precent;
-
-    public BrokenLineBean(String time, String precent) {
-        this.time = time;
-        this.precent = precent;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public String getPrecent() {
-        return precent;
-    }
-
-    public void setPrecent(String precent) {
-        this.precent = precent;
-    }
-
-    @Override
-    public String toString() {
-        return "BrokenLineBean{" +
-                "time='" + time + '\'' +
-                ", precent='" + precent + '\'' +
-                '}';
     }
 }
