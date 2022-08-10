@@ -1,35 +1,36 @@
 package com.divine.widget.dychart;
 
 public class BrokenLineBean {
-    private String time;
-    private String percent;
+    //x为x轴的节点标记，取值：[0,1,2,3,4,5...]，表示第一个节点，第二个节点。。。
+    //y为y轴的节点标记，取值为百分比，[0.1f,0.2f,0.5f.....1f],表示节点y轴的位置
+     private float x, y;
 
-    public BrokenLineBean(String time, String percent) {
-        this.time = time;
-        this.percent = percent;
+    public BrokenLineBean(float x, float y) {
+        this.x = x;
+        this.y = y;
     }
 
-    public String getTime() {
-        return time;
+    public float getX() {
+        return x;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setX(float x) {
+        this.x = x;
     }
 
-    public String getPercent() {
-        return percent;
+    public float getY() {
+        return y;
     }
 
-    public void setPercent(String percent) {
-        this.percent = percent;
+    public void setY(float y) {
+        this.y = y;
     }
 
     @Override
     public String toString() {
         return "BrokenLineBean{" +
-                "time='" + time + '\'' +
-                ", percent='" + percent + '\'' +
+                "x=" + x +
+                ", y=" + y +
                 '}';
     }
 }
