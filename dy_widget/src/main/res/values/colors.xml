@@ -12,8 +12,8 @@
     <color name="back_divider">#F2F5FB</color>
 
     <color name="machine_warn_waiting">#FF4D46</color>
-    <color name="X_axis_default_color">#D8D8D8</color>
-    <color name="X_axis_default_text_color">#3E4A59</color>
+    <color name="axis_default_color">#080808</color>
+    <color name="axis_default_text_color">#3E4A59</color>
     <color name="broken_line_default_color">#1890FF</color>
 
     <color name="gray_text_color_two">#3E4A59</color>

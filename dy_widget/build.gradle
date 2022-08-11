@@ -37,7 +37,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.BigDivine'
                 artifactId = 'divine-DYWidget'
-                version = '1.0.2bate'
+                version = '1.0.2'
             }
         }
     }

@@ -78,6 +78,8 @@
         <attr name="broken_line_color" format="color" />
         <attr name="broken_line_width" format="dimension" />
         <attr name="broken_line_dot_color" format="color" />
+        <attr name="broken_line_dot_text_color" format="color"/>
+        <attr name="broken_line_dot_text_size" format="dimension"/>
         <attr name="broken_line_dot_mode" format="enum">
             <!--实心点-->
             <enum name="solid" value="0" />

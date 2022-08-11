@@ -3,18 +3,19 @@ package com.divine.widget.dychart;
 public class BrokenLineBean {
     //x为x轴的节点标记，取值：[0,1,2,3,4,5...]，表示第一个节点，第二个节点。。。
     //y为y轴的节点标记，取值为百分比，[0.1f,0.2f,0.5f.....1f],表示节点y轴的位置
-     private float x, y;
+    private int x;
+    private float y;
 
-    public BrokenLineBean(float x, float y) {
+    public BrokenLineBean(int x, float y) {
         this.x = x;
         this.y = y;
     }
 
-    public float getX() {
+    public int getX() {
         return x;
     }
 
-    public void setX(float x) {
+    public void setX(int x) {
         this.x = x;
     }
 
