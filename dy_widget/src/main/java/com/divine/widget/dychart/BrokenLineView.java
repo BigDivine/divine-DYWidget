@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Author: Divine
  * CreateDate: 2020/10/20
- * Describe:
+ * Describe: 折线统计图
  */
 public class BrokenLineView extends View {
     private Context context;
