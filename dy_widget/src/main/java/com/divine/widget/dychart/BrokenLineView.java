@@ -286,23 +286,6 @@ public class BrokenLineView extends View {
         }
     }
 
-    /**
-     * 设置控件背景图片
-     *
-     * @param canvas
-     */
-    private void setViewBackground(Canvas canvas) {
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_dy_launcher);
-        Paint bgPaint = new Paint();
-        bgPaint.setAlpha(100);
-        Matrix mx = new Matrix();
-        float vW = getMeasuredWidth(), vH = getMeasuredHeight();
-        float bW = bitmap.getWidth(), bH = bitmap.getHeight();
-        float wScale = vW / bW, hScale = vH / bH;
-        mx.setScale(wScale, hScale);
-        canvas.drawBitmap(bitmap, mx, bgPaint);
-    }
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float eventX = event.getX();
@@ -321,6 +304,23 @@ public class BrokenLineView extends View {
             }
         }
         return super.onTouchEvent(event);
+    }
+
+    /**
+     * 设置控件背景图片
+     *
+     * @param canvas
+     */
+    private void setViewBackground(Canvas canvas) {
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_dy_launcher);
+        Paint bgPaint = new Paint();
+        bgPaint.setAlpha(100);
+        Matrix mx = new Matrix();
+        float vW = getMeasuredWidth(), vH = getMeasuredHeight();
+        float bW = bitmap.getWidth(), bH = bitmap.getHeight();
+        float wScale = vW / bW, hScale = vH / bH;
+        mx.setScale(wScale, hScale);
+        canvas.drawBitmap(bitmap, mx, bgPaint);
     }
 
     /**

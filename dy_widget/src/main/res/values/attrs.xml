@@ -90,10 +90,8 @@
         </attr>
     </declare-styleable>
     <declare-styleable name="CirclePieView">
-        <attr name="pie_title_text_color" format="color"/>
-        <attr name="pie_title_text_size" format="dimension"/>
-        <attr name="pie_percent_title_color" format="color"/>
-        <attr name="pie_percent_title_size" format="dimension"/>
+        <attr name="pie_text_color" format="color"/>
+        <attr name="pie_text_size" format="dimension"/>
         <attr name="pie_text_position" format="enum">
             <enum name="in" value="0"/>
             <enum name="out" value="1"/>

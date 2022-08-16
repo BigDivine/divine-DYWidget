@@ -12,6 +12,7 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -24,10 +25,15 @@ import java.util.Random;
 
 public class CirclePieView extends View {
     private Context context;
-    //外部可配属性：扇形信息名称（类别）文字大小，颜色
-    private float pieTitleTextSize, piePercentTextSize;
-    //外部可配属性：扇形信息百分比文字大小，颜色
-    private int pieTitleTextColor, piePercentTextColor;
+    //圆心在手机中的坐标
+    private float centerX, centerY;
+    private PointF centerPoint;
+    //整圆半径
+    private float radius;
+    //外部可配属性：扇形信息文字大小
+    private float pieTextSize;
+    //外部可配属性：扇形信息百分比文字，颜色
+    private int pieTextColor;
     //外部可配属性：扇形信息在内部还是外部
     private int pieTextPosition;
     //不同比例饼画笔（颜色随机）;文字画笔
@@ -38,6 +44,8 @@ public class CirclePieView extends View {
     private ArrayList<CirclePieBean> data;
     //扇形的颜色
     private ArrayList<Integer> colors;
+    //触摸点
+    private PointF touchPoint;
 
     public CirclePieView(Context context) {
         super(context);
@@ -72,10 +80,8 @@ public class CirclePieView extends View {
 
     private void initAttrs(AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CirclePieView);
-        pieTitleTextSize = typedArray.getDimension(R.styleable.CirclePieView_pie_title_text_size, DensityUtils.dip2px(12, context));
-        pieTitleTextColor = typedArray.getColor(R.styleable.CirclePieView_pie_title_text_color, Color.parseColor("#000000"));
-        piePercentTextSize = typedArray.getDimension(R.styleable.CirclePieView_pie_percent_title_size, DensityUtils.dip2px(12, context));
-        piePercentTextColor = typedArray.getColor(R.styleable.CirclePieView_pie_percent_title_color, Color.parseColor("#000000"));
+        pieTextSize = typedArray.getDimension(R.styleable.CirclePieView_pie_text_size, 12);
+        pieTextColor = typedArray.getColor(R.styleable.CirclePieView_pie_text_color, Color.parseColor("#000000"));
         pieTextPosition = typedArray.getInteger(R.styleable.CirclePieView_pie_text_position, 1);
     }
 
@@ -87,9 +93,9 @@ public class CirclePieView extends View {
 
         textPaint = new Paint();
         textPaint.setAntiAlias(true);
-        textPaint.setColor(Color.parseColor("#ffffff"));
+        textPaint.setColor(pieTextColor);
         textPaint.setStyle(Paint.Style.FILL);
-        textPaint.setTextSize(DensityUtils.dip2px(12, context));
+        textPaint.setTextSize(DensityUtils.dip2px(pieTextSize, context));
     }
 
     @Override
@@ -98,9 +104,9 @@ public class CirclePieView extends View {
         //确定圆点
         float vWidth = getMeasuredWidth();
         float vHeight = getMeasuredHeight();
-        float centerX = vWidth / 2.0f;
-        float centerY = vHeight / 2.0f;
-        PointF centerPoint = new PointF(centerX, centerY);
+        centerX = vWidth / 2.0f;
+        centerY = vHeight / 2.0f;
+        centerPoint = new PointF(centerX, centerY);
         //确定半径
         int pieCount = data.size();
         float maxTextLen = 0;
@@ -120,7 +126,7 @@ public class CirclePieView extends View {
             }
         }
         //半径最大化
-        float radius = (vHeight / 2.0f - padding - DensityUtils.dip2px(pieTitleTextSize, context)) * 4.0f / 5.0f;
+        radius = (vHeight / 2.0f - padding - DensityUtils.dip2px(pieTextSize, context)) * 4.0f / 5.0f;
         if (vWidth < vHeight) {
             radius = vWidth / 2.0f - padding - maxTextLen;
         }
@@ -147,23 +153,40 @@ public class CirclePieView extends View {
             piePath.lineTo(lastPoint.x, lastPoint.y);
             //连扇形
             piePath.arcTo(pieRectF, lastAngle, angle);
+            //判断点是否在扇形内
+            if (null != touchPoint) {
+                if (isInPie(lastAngle, angle)) {
+                    piePaint.setColor(Color.parseColor("#EF556E"));
+                }
+            }
             canvas.drawPath(piePath, piePaint);
+
             //目前已画角度
             float usedAngle = lastAngle + angle;
             //增加文字提示
             //确定文字位置,文字中心点在2/3半径的圆弧上
-            PointF textPoint = getTextPiont(centerPoint, radius, lastAngle, angle);
+            PointF textPoint = getTextPoint(lastAngle, angle);
             if (pieTextPosition == 0) {
                 drawTextIn(canvas, pieText, bean.getPieTitle(), textPoint);
             }
             //将数据引出圆外展示
             if (pieTextPosition == 1) {
-                drawTextOut(canvas, pieText, bean.getPieTitle(), textPoint, centerPoint, radius);
+                drawTextOut(canvas, pieText, bean.getPieTitle(), textPoint);
             }
-            lastPoint = getPointInCircle(usedAngle, radius, centerPoint);
+            //记录已画的区域
+            lastPoint = getPointInCircle(usedAngle);
             lastAngle = usedAngle;
         }
         super.onDraw(canvas);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        touchPoint = new PointF();
+        touchPoint.x = event.getX();
+        touchPoint.y = event.getY();
+        invalidate();
+        return super.onTouchEvent(event);
     }
 
     /**
@@ -183,7 +206,16 @@ public class CirclePieView extends View {
         canvas.drawBitmap(bitmap, mx, bgPaint);
     }
 
+    /**
+     * 画扇形内的文字
+     *
+     * @param canvas
+     * @param pieText   百分比
+     * @param pieTitle  名称
+     * @param textPoint 文字中心坐标点
+     */
     private void drawTextIn(Canvas canvas, String pieText, String pieTitle, PointF textPoint) {
+        //获取文字长度
         float textLen = textPaint.measureText(pieText);
         float titleLen = textPaint.measureText(pieTitle);
         //直接将数据写在圆内
@@ -191,36 +223,64 @@ public class CirclePieView extends View {
         canvas.drawText(pieTitle, textPoint.x - titleLen / 2, textPoint.y, textPaint);
     }
 
-    private void drawTextOut(Canvas canvas, String pieText, String pieTitle, PointF textPoint, PointF centerPoint, float radius) {
+    /**
+     * 文字写在扇形之外
+     *
+     * @param canvas
+     * @param pieText   百分比
+     * @param pieTitle  名称
+     * @param textPoint 文字中心坐标点--扇形内部
+     */
+    private void drawTextOut(Canvas canvas, String pieText, String pieTitle, PointF textPoint) {
+        //获取文字长度
         float textLen = textPaint.measureText(pieText);
         float titleLen = textPaint.measureText(pieTitle);
-        float centerX = centerPoint.x;
-        float centerY = centerPoint.y;
+        //通过计算获取文字写入的目标点 取5/4个半径长度的圆外点为文字起点
         float targetX = Math.abs(textPoint.x - centerX) / (radius * 2.0f / 3.0f) * radius * 5.0f / 4.0f;
         float targetY = Math.abs(textPoint.y - centerY) / (radius * 2.0f / 3.0f) * radius * 5.0f / 4.0f;
+        //根据圆内点x的坐标判断最终文字起点是在一四象限还是二三象限
         if (textPoint.x - centerX > 0) {
             targetX = targetX + centerX;
         } else {
             targetX = centerX - targetX;
         }
+        //根据圆内点y的坐标判断最终文字起点是在一二象限还是三四象限
         if (textPoint.y - centerY > 0) {
             targetY = targetY + centerY;
         } else {
             targetY = centerY - targetY;
         }
+        //以圆内已确定的文字起点延伸到圆外的文字起点，连一条线
         canvas.drawLine(textPoint.x, textPoint.y, targetX, targetY, piePaint);
+        //写文字
+        //创建一个点，坐标为文字起点
         PointF lineTargetPoint = new PointF(targetX, targetY);
+        //获取每一部分文字最长长度
         float maxLen = 0;
         if (textLen > titleLen) {
             maxLen = textLen;
         } else {
             maxLen = titleLen;
         }
+        //设置文字颜色
         textPaint.setColor(Color.parseColor("#000000"));
+        //以文字起点开始画一条横线，长度为最长文字长度+50px，用来分割扇形名称和扇形百分比
+        //写扇形的名称文字，在横线上方并居中
+        //写扇形的百分比，在横线的下方
         if (lineTargetPoint.x > centerX) {
             canvas.drawLine(lineTargetPoint.x, lineTargetPoint.y, lineTargetPoint.x + maxLen + 50, lineTargetPoint.y, piePaint);
             canvas.drawText(pieTitle, lineTargetPoint.x + 25, lineTargetPoint.y - DensityUtils.dip2px(5, context), textPaint);
             canvas.drawText(pieText, lineTargetPoint.x + (maxLen - textLen) / 2.0f + 25, lineTargetPoint.y + DensityUtils.dip2px(14, context), textPaint);
+        } else if (lineTargetPoint.x == centerX) {
+            if (lineTargetPoint.y > centerY) {
+                canvas.drawLine(lineTargetPoint.x, lineTargetPoint.y, lineTargetPoint.x - maxLen - 50, lineTargetPoint.y, piePaint);
+                canvas.drawText(pieTitle, lineTargetPoint.x - maxLen - 25, lineTargetPoint.y - DensityUtils.dip2px(5, context), textPaint);
+                canvas.drawText(pieText, lineTargetPoint.x - (maxLen + textLen) / 2.0f - 25, lineTargetPoint.y + DensityUtils.dip2px(14, context), textPaint);
+            } else {
+                canvas.drawLine(lineTargetPoint.x, lineTargetPoint.y, lineTargetPoint.x + maxLen + 50, lineTargetPoint.y, piePaint);
+                canvas.drawText(pieTitle, lineTargetPoint.x + 25, lineTargetPoint.y - DensityUtils.dip2px(5, context), textPaint);
+                canvas.drawText(pieText, lineTargetPoint.x + (maxLen - textLen) / 2.0f + 25, lineTargetPoint.y + DensityUtils.dip2px(14, context), textPaint);
+            }
         } else {
             canvas.drawLine(lineTargetPoint.x, lineTargetPoint.y, lineTargetPoint.x - maxLen - 50, lineTargetPoint.y, piePaint);
             canvas.drawText(pieTitle, lineTargetPoint.x - maxLen - 25, lineTargetPoint.y - DensityUtils.dip2px(5, context), textPaint);
@@ -228,10 +288,18 @@ public class CirclePieView extends View {
         }
     }
 
-    private PointF getTextPiont(PointF centerPoint, float radius, float lastAngle, float angle) {
+    /**
+     * 获取文字的坐标中心点
+     *
+     * @param lastAngle 已叠加的的扇形区域的角度
+     * @param angle     本次对应的扇形区域的角度
+     * @return 文字中心点
+     */
+    private PointF getTextPoint(float lastAngle, float angle) {
+        //取已画出的角度+当前扇形角度的一半用于确定坐标点所在的半径位置
         float halfAngle = lastAngle + angle / 2.0f;
         if (halfAngle >= 270) {
-            //显示的不对
+            //No.1
             halfAngle = 360 - halfAngle;
             double halfDegree = halfAngle * Math.PI / 180.0d;
             float halfX = (float) Math.cos(halfDegree) * radius * 2.0f / 3.0f;
@@ -241,6 +309,7 @@ public class CirclePieView extends View {
             PointF textCenterPoint = new PointF(textCenterX, textCenterY);
             return textCenterPoint;
         } else if (halfAngle >= 180) {
+            //No.2
             halfAngle = halfAngle - 180;
             double halfDegree = halfAngle * Math.PI / 180.0d;
             float halfX = (float) Math.cos(halfDegree) * radius * 2.0f / 3.0f;
@@ -250,6 +319,7 @@ public class CirclePieView extends View {
             PointF textCenterPoint = new PointF(textCenterX, textCenterY);
             return textCenterPoint;
         } else if (halfAngle >= 90) {
+            //No.3
             halfAngle = 180 - halfAngle;
             double halfDegree = halfAngle * Math.PI / 180.0d;
             float halfX = (float) Math.cos(halfDegree) * radius * 2.0f / 3.0f;
@@ -259,6 +329,7 @@ public class CirclePieView extends View {
             PointF textCenterPoint = new PointF(textCenterX, textCenterY);
             return textCenterPoint;
         } else {
+            //No.4
             double halfDegree = halfAngle * Math.PI / 180.0d;
             float halfX = (float) Math.cos(halfDegree) * radius * 2.0f / 3.0f;
             float halfY = (float) Math.sin(halfDegree) * radius * 2.0f / 3.0f;
@@ -272,12 +343,10 @@ public class CirclePieView extends View {
     /**
      * 获取角度对应的在圆上的点坐标
      *
-     * @param angle       角度
-     * @param radius      半径
-     * @param centerPoint 原点坐标
+     * @param angle 角度
      * @return 目标点在手机屏幕上的坐标
      */
-    private PointF getPointInCircle(float angle, double radius, PointF centerPoint) {
+    private PointF getPointInCircle(float angle) {
         //判断点的象限
         if (angle > 0 && angle <= 90) {
             //No.4
@@ -312,6 +381,71 @@ public class CirclePieView extends View {
             float targetY = centerPoint.y - (float) y;
             return new PointF(targetX, targetY);
         }
+    }
+
+    /**
+     * 判断点击的点是否在扇形之内
+     *
+     * @param lastAngle 已叠加的的扇形区域的角度
+     * @param angle     本次对应的扇形区域的角度
+     * @return true为该点在本扇形中
+     */
+    private boolean isInPie(float lastAngle, float angle) {
+        //判断点的象限
+        if (touchPoint.x > centerX) {
+            if (touchPoint.y <= centerY) {
+                //No.1
+                float touchXDistance = touchPoint.x - centerX;
+                float touchYDistance = centerY - touchPoint.y;
+                double touchDistanceToCenter = Math.sqrt(touchXDistance * touchXDistance + touchYDistance * touchYDistance);
+                if (touchDistanceToCenter <= radius) {
+                    double touchDegree = Math.acos((double) touchXDistance / touchDistanceToCenter);
+                    float touchAngle = 360.0f - (float) touchDegree / (float) Math.PI * 180.0f;
+                    if (touchAngle > lastAngle && touchAngle <= (lastAngle + angle)) {
+                        return true;
+                    }
+                }
+            } else {
+                //No.4
+                float touchXDistance = touchPoint.x - centerX;
+                float touchYDistance = touchPoint.y - centerY;
+                double touchDistanceToCenter = Math.sqrt(touchXDistance * touchXDistance + touchYDistance * touchYDistance);
+                if (touchDistanceToCenter <= radius) {
+                    double touchDegree = Math.acos((double) touchXDistance / touchDistanceToCenter);
+                    float touchAngle = (float) touchDegree / (float) Math.PI * 180.0f;
+                    if (touchAngle > lastAngle && touchAngle <= (lastAngle + angle)) {
+                        return true;
+                    }
+                }
+            }
+        } else {
+            if (touchPoint.y > centerY) {
+                //No.3
+                float touchXDistance = centerX - touchPoint.x;
+                float touchYDistance = touchPoint.y - centerY;
+                double touchDistanceToCenter = Math.sqrt(touchXDistance * touchXDistance + touchYDistance * touchYDistance);
+                if (touchDistanceToCenter <= radius) {
+                    double touchDegree = Math.acos((double) touchXDistance / touchDistanceToCenter);
+                    float touchAngle = 180.0f - (float) touchDegree / (float) Math.PI * 180.0f;
+                    if (touchAngle > lastAngle && touchAngle <= (lastAngle + angle)) {
+                        return true;
+                    }
+                }
+            } else {
+                //No.2
+                float touchXDistance = centerX - touchPoint.x;
+                float touchYDistance = centerY - touchPoint.y;
+                double touchDistanceToCenter = Math.sqrt(touchXDistance * touchXDistance + touchYDistance * touchYDistance);
+                if (touchDistanceToCenter <= radius) {
+                    double touchDegree = Math.acos((double) touchXDistance / touchDistanceToCenter);
+                    float touchAngle = (float) touchDegree / (float) Math.PI * 180.0f + 180.0f;
+                    if (touchAngle > lastAngle && touchAngle <= (lastAngle + angle)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
