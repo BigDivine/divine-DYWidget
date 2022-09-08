@@ -22,7 +22,11 @@ import com.divine.dy.lib_utils.sys.DensityUtils;
 
 import java.util.ArrayList;
 import java.util.Random;
-
+/**
+ * Author: Divine
+ * CreateDate: 2022/08/15
+ * Describe: 饼装统计图
+ */
 public class CirclePieView extends View {
     private Context context;
     //圆心在手机中的坐标
@@ -141,7 +145,7 @@ public class CirclePieView extends View {
             if (colors.size() > 0) {
                 piePaint.setColor(colors.get(i));
             } else {
-                piePaint.setColor(getRandomColor());
+                piePaint.setColor(DyChartUtils.getRandomColor());
             }
             //将数字转为角度
             float angle = ((float) piePercent / 100.0f * 360.0f);
@@ -448,20 +452,11 @@ public class CirclePieView extends View {
         return false;
     }
 
-    /**
-     * 获取随机颜色
-     *
-     * @return 颜色rgb
-     */
-    private int getRandomColor() {
-        int red = new Random().nextInt(255);
-        int green = new Random().nextInt(255);
-        int blue = new Random().nextInt(255);
-        return Color.rgb(red, green, blue);
-    }
-
     public void startDraw(ArrayList<CirclePieBean> data) {
         this.data = data;
+        for(int i=0;i<this.data.size();i++){
+            this.colors.add(DyChartUtils.getRandomColor());
+        }
         initView();
         invalidate();
     }

@@ -25,7 +25,6 @@ import com.divine.R;
  * 自定义申请状态textView
  */
 public class EllipseColorTextView extends View {
-
     /**
      * 文本内容
      */

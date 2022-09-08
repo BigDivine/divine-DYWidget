@@ -9,11 +9,15 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PointF;
+import android.graphics.RectF;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.annotation.Nullable;
 
 import com.divine.R;
 import com.divine.dy.lib_utils.sys.DensityUtils;
@@ -23,10 +27,10 @@ import java.util.List;
 
 /**
  * Author: Divine
- * CreateDate: 2022/08/10
- * Describe: 折线统计图
+ * CreateDate: 2022/08/23
+ * Describe: 柱状统计图
  */
-public class BrokenLineView extends View {
+public class PillarView extends View {
     private Context context;
     //外部可设置属性
     //x轴样式
@@ -39,56 +43,31 @@ public class BrokenLineView extends View {
     private int yAxisTextColor;
     private float yAxisTextSize;
     private float yAxisWidth;
-    //折线样式
-    private int brokenLineColor;
-    private int brokenLineDotColor;
-    private float brokenLineWidth;
-    private int brokenLineDotMode;
-    //折点提示文字样式
-    private int brokenDotTextColor;
-    private int brokenDotTextSize;
-    //实心圆点
-    public final static int DOT_MODE_SOLID = 0;
-    //空心圆点
-    public final static int DOT_MODE_HOLLOW = 1;
-    //无边框空心圆点
-    public final static int DOT_MODE_FRAMELESS = 2;
+
     //坐标轴圆点
     private float originPointX, originPointY;
     //x轴画笔
     private Paint xPaint;
     //x轴文字画笔
     private Paint xTextPaint;
-    //x轴虚线画笔
-    //    private Paint xLinePaint;
     //y轴画笔
     private Paint yPaint;
-    //y轴画笔
+    //虚线画笔
     private Paint dummyPaint;
     //y轴文字画笔
     private Paint yTextPaint;
-    //y轴虚线画笔
-    //    private Paint yLinePaint;
-    //折线点画笔
-    private Paint pointPaint;
-    //折线画笔
-    private Paint brokenLinePaint;
-    //选中的折点画笔
-    private Paint effectPaint;
-    //选中折点指示线的画笔
-    private Paint effectLinePaint;
-    //折点半径
-    private float brokenDotRadius = 5;
+    //柱状画笔
+    private Paint pillarPaint;
     //组件的padding(:dp)
     private int padding = 20;
     //x,y轴多出来一部分
     private int axisMore = 100;
-    //开始绘制折线表
+    //开始绘制
     private boolean start = false;
-    //折点集合
-    private List<BrokenLineBean> data;
-    //折点对应的控件的坐标点
-    private ArrayList<PointF> pointFS;
+    //数据集合
+    private List<PillarBean> data;
+    //柱形的颜色
+    private ArrayList<Integer> colors;
     //点击的折点
     private PointF touchPoint;
     private boolean isShowPoint = false;
@@ -104,21 +83,26 @@ public class BrokenLineView extends View {
     //是否显示logo背景
     private boolean showLogoBackground = true;
 
-    public BrokenLineView(Context context) {
+    public PillarView(Context context) {
         super(context);
         this.context = context;
         this.data = new ArrayList<>();
+        this.colors = new ArrayList<>();
     }
 
-    public BrokenLineView(Context context, AttributeSet attrs) {
+    public PillarView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
+        this.data = new ArrayList<>();
+        this.colors = new ArrayList<>();
         initAttrs(attrs);
     }
 
-    public BrokenLineView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public PillarView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
+        this.data = new ArrayList<>();
+        this.colors = new ArrayList<>();
         initAttrs(attrs);
     }
 
@@ -138,24 +122,14 @@ public class BrokenLineView extends View {
         yAxisTextColor = typedArray.getColor(R.styleable.BrokenLineView_Y_axis_text_color, defaultAxisTextColor);
         yAxisTextSize = typedArray.getDimension(R.styleable.BrokenLineView_Y_axis_text_size, DensityUtils.sp2px(10, context));
         yAxisWidth = typedArray.getDimension(R.styleable.BrokenLineView_Y_axis_width, DensityUtils.sp2px(1, context));
-
-        brokenLineColor = typedArray.getColor(R.styleable.BrokenLineView_broken_line_color, defaultLineColor);
-        brokenLineDotColor = typedArray.getColor(R.styleable.BrokenLineView_broken_line_dot_color, defaultLineColor);
-        brokenLineWidth = typedArray.getDimension(R.styleable.BrokenLineView_broken_line_width, 2f);
-        brokenLineDotMode = typedArray.getInteger(R.styleable.BrokenLineView_broken_line_dot_mode, DOT_MODE_SOLID);
-        brokenDotTextSize = typedArray.getInteger(R.styleable.BrokenLineView_broken_line_dot_text_size, DensityUtils.sp2px(10, context));
-        brokenDotTextColor = typedArray.getInteger(R.styleable.BrokenLineView_broken_line_dot_text_color, defaultLineColor);
-
     }
 
     private void initView() {
         setXAxis();
         setYAxis();
         setAxisDummy();
-        setPoint();
-        setBrokenLine();
-        //折点文字颜色
-        setEffect();
+        setPillar();
+
         if (null == ySplit) {
             ySplit = new String[]{"0%", "25%", "50%", "75%", "100%"};
         }
@@ -199,7 +173,7 @@ public class BrokenLineView extends View {
             //x轴必须等分，所以data中的bean的x一定是x轴总长可以整除的数字
             int pointCount = data.size();
             float xLength = xStopX - originPointX - axisMore;
-            float xUnitLen = xLength / (float) (pointCount - 1);
+            float xUnitLen = xLength / (float) pointCount;
             //y轴等分
             float yLength = originPointY - yStopY - axisMore;
             float yUnitLen = yLength / (float) (yCount - 1);
@@ -214,10 +188,10 @@ public class BrokenLineView extends View {
             for (int n = 0; n < pointCount; n++) {
                 canvas.drawCircle(originPointX + n * xUnitLen, originPointY, 5, xPaint);
                 if (showXYDummyLine || showXDummyLine) {
-                    canvas.drawLine(originPointX + n * xUnitLen, originPointY, originPointX + n * xUnitLen, originPointY - (yCount - 1) * yUnitLen, dummyPaint);
+                    canvas.drawLine(originPointX + (n + 1) * xUnitLen, originPointY, originPointX + (n + 1) * xUnitLen, originPointY - (yCount - 1) * yUnitLen, dummyPaint);
                 }
                 float textLength = xTextPaint.measureText(xSplit[n]);
-                canvas.drawText(xSplit[n], originPointX + n * xUnitLen - textLength / 2, originPointY + xAxisTextSize, xTextPaint);
+                canvas.drawText(xSplit[n], originPointX + n * xUnitLen + (xUnitLen - textLength) / 2, originPointY + xAxisTextSize, xTextPaint);
             }
             //画y轴
             canvas.drawLine(originPointX, originPointY, originPointX, yStopY, yPaint);
@@ -230,7 +204,7 @@ public class BrokenLineView extends View {
             for (int n = 0; n < yCount; n++) {
                 canvas.drawCircle(originPointX, originPointY - n * yUnitLen, 5, yPaint);
                 if (showXYDummyLine || showYDummyLine) {
-                    canvas.drawLine(originPointX, originPointY - n * yUnitLen, originPointX + (pointCount - 1) * xUnitLen, originPointY - n * yUnitLen, dummyPaint);
+                    canvas.drawLine(originPointX, originPointY - n * yUnitLen, originPointX + pointCount * xUnitLen, originPointY - n * yUnitLen, dummyPaint);
                 }
                 if (n > 0) {
                     float textLength = yTextPaint.measureText(ySplit[n]);
@@ -238,50 +212,32 @@ public class BrokenLineView extends View {
                 }
             }
             //记录每个折点坐标
-            float[] points = new float[pointCount * 2];
-            pointFS = new ArrayList<>();
             //画坐标点
             for (int i = 0; i < pointCount; i++) {
-                BrokenLineBean bean = data.get(i);
-                float circleX;
-                if (bean.getX() == 0f) {
-                    circleX = originPointX;
+                if (this.colors.size() > 0) {
+                    pillarPaint.setColor(this.colors.get((i)));
                 } else {
-                    circleX = originPointX + xUnitLen * (i);
+                    pillarPaint.setColor(DyChartUtils.getRandomColor());
                 }
-                float circleY = originPointY - bean.getY() * yLength;
-                if (null != touchPoint && circleX == touchPoint.x && circleY == touchPoint.y && isShowPoint) {
-                    float yNum = maxYNum * data.get(i).getY();
-                    canvas.drawCircle(circleX, circleY, brokenDotRadius, effectLinePaint);
-                    canvas.drawText(yNum + "", circleX + 10, circleY + brokenDotTextSize / 2, effectPaint);
-                    canvas.drawLine(circleX, originPointY, circleX, originPointY - (yCount - 1) * yUnitLen, effectLinePaint);
-                    canvas.drawLine(originPointX, circleY, originPointX + (pointCount - 1) * xUnitLen, circleY, effectLinePaint);
-                } else {
-                    canvas.drawCircle(circleX, circleY, brokenDotRadius, pointPaint);
+                PillarBean bean = data.get(i);
+                float yNum = maxYNum * data.get(i).getY();
+                //数据对应的柱状图
+                RectF pillarRectF = new RectF();
+                pillarRectF.bottom = originPointY;
+                pillarRectF.left = originPointX + i * xUnitLen;
+                pillarRectF.top = originPointY - bean.getY() * yLength;
+                pillarRectF.right = originPointX + (i + 1) * xUnitLen;
+                //全长柱状图
+                RectF xRectF = new RectF();
+                xRectF.bottom = originPointY;
+                xRectF.left = originPointX + i * xUnitLen;
+                xRectF.top = originPointY - yLength;
+                xRectF.right = originPointX + (i + 1) * xUnitLen;
+                if (null != touchPoint && xRectF.contains(touchPoint.x, touchPoint.y)) {
+                    pillarPaint.setColor(Color.parseColor("#EF556E"));
+                    canvas.drawText(yNum + "", pillarRectF.left, pillarRectF.top, pillarPaint);
                 }
-                points[i * 2] = circleX;
-                points[(i * 2) + 1] = circleY;
-                pointFS.add(new PointF(circleX, circleY));
-            }
-            //连线
-            for (int j = 0; j < pointFS.size() - 1; j++) {
-                PointF pointF = pointFS.get(j);
-                PointF nextPointF = pointFS.get(j + 1);
-                if (brokenLineDotMode == DOT_MODE_HOLLOW) {
-                    float xLen = Math.abs(nextPointF.x - pointF.x);
-                    float yLen = Math.abs(nextPointF.y - pointF.y);
-                    float distance = (float) Math.sqrt(xLen * xLen + yLen * yLen);
-                    float xCir, yCir;
-                    xCir = xLen / distance * brokenDotRadius;
-                    yCir = yLen / distance * brokenDotRadius;
-                    if (nextPointF.y - pointF.y > 0) {
-                        canvas.drawLine(pointF.x + xCir, pointF.y + yCir, nextPointF.x - xCir, nextPointF.y - yCir, brokenLinePaint);
-                    } else {
-                        canvas.drawLine(pointF.x + xCir, pointF.y - yCir, nextPointF.x - xCir, nextPointF.y + yCir, brokenLinePaint);
-                    }
-                } else {
-                    canvas.drawLine(pointF.x, pointF.y, nextPointF.x, nextPointF.y, brokenLinePaint);
-                }
+                canvas.drawRect(pillarRectF, pillarPaint);
             }
         }
     }
@@ -290,19 +246,8 @@ public class BrokenLineView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         float eventX = event.getX();
         float eventY = event.getY();
-        if (null != pointFS && pointFS.size() > 0) {
-            isShowPoint = true;
-            for (int i = 0; i < pointFS.size(); i++) {
-                PointF point = pointFS.get(i);
-                float pointX = point.x;
-                float pointY = point.y;
-                if (eventX < pointX + 30 && eventX > pointX - 30
-                        && eventY < pointY + 30 && eventY > pointY - 30) {
-                    touchPoint = point;
-                    invalidate();
-                }
-            }
-        }
+        touchPoint = new PointF(eventX, eventY);
+        invalidate();
         return super.onTouchEvent(event);
     }
 
@@ -369,51 +314,10 @@ public class BrokenLineView extends View {
         dummyPaint.setColor(Color.parseColor("#60000000"));
     }
 
-    /**
-     * 折点画笔
-     */
-    private void setPoint() {
-        pointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        pointPaint.setAntiAlias(true);
-        pointPaint.setColor(brokenLineDotColor);
-        if (brokenLineDotMode == DOT_MODE_SOLID) {
-            //实心圆点
-            pointPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        } else if (brokenLineDotMode == DOT_MODE_HOLLOW) {
-            //空心圆点
-            pointPaint.setStyle(Paint.Style.STROKE);
-        } else {
-            //实心无边
-            pointPaint.setStyle(Paint.Style.FILL);
-        }
-        pointPaint.setStrokeWidth(DensityUtils.dip2px(1, context));
-    }
-
-    /**
-     * 折线画笔
-     */
-    private void setBrokenLine() {
-        brokenLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        brokenLinePaint.setAntiAlias(true);
-        brokenLinePaint.setColor(brokenLineColor);
-        brokenLinePaint.setStrokeWidth(brokenLineWidth);
-    }
-
-    /**
-     * 折点提示文字
-     */
-    private void setEffect() {
-        effectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        effectPaint.setColor(brokenDotTextColor);
-        effectPaint.setTextSize(brokenDotTextSize);
-        effectPaint.setStyle(Paint.Style.FILL);
-        effectPaint.setAntiAlias(true);
-
-        effectLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        effectLinePaint.setColor(Color.parseColor("#EF556E"));
-        effectLinePaint.setTextSize(brokenDotTextSize);
-        effectLinePaint.setStyle(Paint.Style.FILL);
-        effectLinePaint.setAntiAlias(true);
+    private void setPillar() {
+        pillarPaint = new Paint();
+        pillarPaint.setStyle(Paint.Style.FILL);
+        pillarPaint.setAntiAlias(true);
     }
 
     public void setSplit(String[] xSplit, String[] ySplit) {
@@ -442,11 +346,24 @@ public class BrokenLineView extends View {
         this.showLogoBackground = showLogoBackground;
     }
 
-    public void startDraw(List<BrokenLineBean> data, float maxYNum) {
+    public void startDraw(List<PillarBean> data, float maxYNum) {
         start = true;
         this.maxYNum = maxYNum;
         this.data = data;
+        for (int i = 0; i < this.data.size(); i++) {
+            this.colors.add(DyChartUtils.getRandomColor());
+        }
         initView();
         invalidate();
+    }
+
+    public void startDraw(List<PillarBean> data, float maxYNum, ArrayList<Integer> colors) {
+        start = true;
+        this.maxYNum = maxYNum;
+        this.data = data;
+        this.colors = colors;
+        initView();
+        invalidate();
+
     }
 }
